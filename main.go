@@ -27,10 +27,9 @@ func fetch_domain_worker_url(query map[string]string) string {
 	return ""
 }
 func ProxyHandler(w http.ResponseWriter, r *http.Request) {
-
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 2 || parts[1] == "" {
-		http.Error(w, "Bad Request", http.StatusBadRequest)
+		http.Error(w, "Dispatch Works!", http.StatusBadRequest)
 		return
 	}
 	domainName := parts[1]
