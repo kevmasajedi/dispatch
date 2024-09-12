@@ -52,9 +52,17 @@ func ProxyHandler(w http.ResponseWriter, r *http.Request) {
 	r.URL.Path = strings.Join(parts[2:], "/")
 	proxy.ServeHTTP(w, r)
 }
+func enableCors(w *http.ResponseWriter) {
+    (*w).Header().Set("Access-Control-Allow-Origin", "*")
+    (*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    (*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
 
 func main() {
-	http.HandleFunc("/", ProxyHandler)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        	enableCors(&w) // Add CORS headers
+        	ProxyHandler(w, r) // Handle the request
+    	})
 	port := "8012"
 	if len(os.Args) > 1 {
 		port = os.Args[1]
