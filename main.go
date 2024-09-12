@@ -27,6 +27,13 @@ func fetch_domain_worker_url(query map[string]string) string {
 	return ""
 }
 func ProxyHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
+	if r.Method == http.MethodOptions { // Handle preflight requests
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) < 2 || parts[1] == "" {
 		http.Error(w, "Dispatch Works!", http.StatusBadRequest)
@@ -55,12 +62,11 @@ func ProxyHandler(w http.ResponseWriter, r *http.Request) {
 func enableCors(w *http.ResponseWriter) {
     (*w).Header().Set("Access-Control-Allow-Origin", "*")
     (*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-    (*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+    (*w).Header().Set("Access-Control-Allow-Headers", "*")
 }
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        	enableCors(&w) // Add CORS headers
         	ProxyHandler(w, r) // Handle the request
     	})
 	port := "8012"
